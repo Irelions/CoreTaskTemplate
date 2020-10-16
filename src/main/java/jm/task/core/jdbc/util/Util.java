@@ -14,17 +14,21 @@ public class Util {
     Connection connection;
 
     public Util(){
-        try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);) {
-            if (connection != null) {
-                this.connection = connection;
-                System.out.println("Соединение к базе установлено!");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public Connection getConnection() {
-        return this.connection;
+        try{
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+
+            this.connection = connection;
+            if (!connection.isClosed()) {
+                System.out.println("Соединение к базе установлено!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
     }
 }

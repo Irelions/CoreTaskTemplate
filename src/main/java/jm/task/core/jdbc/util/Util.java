@@ -1,5 +1,12 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+
 import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -11,13 +18,15 @@ public class Util {
     private final static String USER = "root";
     private final static String PASSWORD = "root";
     private final static String URL = "jdbc:mysql://localhost/jmdb_lesson?useLegacyDatetimeCode=false&serverTimezone=UTC";
+    private final static String TRUE = "true";
     Connection connection;
+    SessionFactory sessionFactory;
 
     public Util(){
 
     }
 
-    public Connection getConnection() {
+    public Connection getConnectionJDBC() throws HibernateException {
         try{
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
@@ -30,5 +39,21 @@ public class Util {
             e.printStackTrace();
         }
         return connection;
+    }
+
+    public SessionFactory getSesionFactory () {
+        Configuration configuration = new Configuration()
+                .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
+                .setProperty("hibernate.connection.url", URL)
+                .setProperty("hibernate.connection.user", USER)
+                .setProperty("hibernate.connection.password", PASSWORD)
+                .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                .setProperty("hibernate.show_sql", TRUE)
+                .addAnnotatedClass(User.class)
+                ;
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties()).build();
+
+        return configuration.buildSessionFactory(serviceRegistry);
     }
 }

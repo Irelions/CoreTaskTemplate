@@ -16,7 +16,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private String SQLtableChek = "SHOW TABLES LIKE 'users'";
 
     public UserDaoJDBCImpl() {
-        this.connection = new Util().getConnection();
+        this.connection = new Util().getConnectionJDBC();
     }
 
     public void createUsersTable() throws SQLException {

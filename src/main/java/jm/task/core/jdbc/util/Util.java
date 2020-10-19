@@ -3,10 +3,12 @@ package jm.task.core.jdbc.util;
 import jm.task.core.jdbc.model.User;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -20,10 +22,8 @@ public class Util {
     private final static String URL = "jdbc:mysql://localhost/jmdb_lesson?useLegacyDatetimeCode=false&serverTimezone=UTC";
     private final static String TRUE = "true";
     Connection connection;
-    SessionFactory sessionFactory;
 
     public Util(){
-
     }
 
     public Connection getConnectionJDBC() throws HibernateException {
@@ -51,9 +51,11 @@ public class Util {
                 .setProperty("hibernate.show_sql", TRUE)
                 .addAnnotatedClass(User.class)
                 ;
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                .applySettings(configuration.getProperties()).build();
 
+
+
+        ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
         return configuration.buildSessionFactory(serviceRegistry);
+
     }
 }
